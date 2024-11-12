@@ -8,26 +8,28 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-	string buffer = "Hello server, This is Client speaking.";
+	int ret = 0;
+	string buffer = "Hello.";
 
 	WSADATA wsa_data;
 	SOCKADDR_IN addr;
 
 	WSAStartup(MAKEWORD(2, 0), &wsa_data);
-	const auto server = socket(AF_INET, SOCK_STREAM, 0);
 
+	const auto server = socket(AF_INET, SOCK_STREAM, 0);
 	inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr.s_addr);
 
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(5555);
 
-	connect(server, reinterpret_cast<SOCKADDR*>(&addr), sizeof(addr));
-	cout << "Connected to server!" << endl;
+	ret = connect(server, reinterpret_cast<SOCKADDR*>(&addr), sizeof(addr));
+	cout << "Connected to server! (ret:" << ret << ")" << endl;
 
-	send(server, buffer.c_str(), buffer.length(), 0);
-	cout << "Message sent... [" << buffer << "]" << endl;
+	ret = send(server, buffer.c_str(), buffer.size(), 0);
+	cout << "Message sent... (ret:" << ret << ")" << endl;
 
-	closesocket(server);
+	ret = closesocket(server);
+	cout << "Socket closed. (ret:" << ret << ")" << endl << endl;
+
 	WSACleanup();
-	cout << "Socket closed." << endl << endl;
 }
